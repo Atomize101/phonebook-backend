@@ -28,6 +28,10 @@ app.get('/', (request, response) => {
 	response.send('<h1>Hello World!</h1>');
 });
 
+app.get('/api/info', (request, response) => {
+	response.send(`<p>There are ${persons.length} contacts stored.</p> <p>${new Date()}</p>`);
+});
+
 app.get('/api/persons', (request, response) => {
 	response.json(persons);
 });
