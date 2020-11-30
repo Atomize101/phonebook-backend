@@ -5,11 +5,29 @@ var morgan = require('morgan');
 
 app.use(bodyParser.json());
 
-morgan.token('id', function getId(req) {
-	return req.id;
+app.use(
+	morgan('tiny', {
+		skip: (req) => {
+			return req.method == 'POST';
+		},
+		stream: process.stdout,
+	})
+);
+
+morgan.token('reqData', (req) => {
+	return JSON.stringify({ name: req.body.name, number: req.body.number });
 });
 
-app.use(morgan('tiny'));
+var POSTLoggerFormat = ':method :url :status :res[content-length] - :response-time ms :reqData';
+
+app.use(
+	morgan(POSTLoggerFormat, {
+		skip: (req) => {
+			return req.method != 'POST';
+		},
+		stream: process.stdout,
+	})
+);
 
 let persons = [
 	{
@@ -69,7 +87,6 @@ function getRandomInt(max) {
 
 app.post('/api/persons', (req, res) => {
 	const body = req.body;
-	console.log(body);
 	if (!body.name || !body.number) {
 		return res.status(400).json({
 			error: 'content missing',
@@ -77,7 +94,7 @@ app.post('/api/persons', (req, res) => {
 	}
 
 	const checkExists = persons.findIndex((person) => person.name.toLowerCase() == body.name.toLowerCase());
-	if (checkExists) {
+	if (checkExists > 0) {
 		console.log('error: name already exists');
 		return res.status(409).json({
 			error: 'name already exists',
