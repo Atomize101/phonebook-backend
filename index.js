@@ -63,6 +63,11 @@ function getRandomInt(max) {
 app.post('/api/persons', (req, res) => {
 	const body = req.body;
 	console.log(body);
+	if (!body.name || !body.number) {
+		return res.status(400).json({
+			error: 'content missing',
+		});
+	}
 
 	const person = {
 		id: getRandomInt(10000),
