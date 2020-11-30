@@ -1,8 +1,15 @@
 const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
+var morgan = require('morgan');
 
 app.use(bodyParser.json());
+
+morgan.token('id', function getId(req) {
+	return req.id;
+});
+
+app.use(morgan('tiny'));
 
 let persons = [
 	{
@@ -69,10 +76,18 @@ app.post('/api/persons', (req, res) => {
 		});
 	}
 
+	const checkExists = persons.findIndex((person) => person.name.toLowerCase() == body.name.toLowerCase());
+	if (checkExists) {
+		console.log('error: name already exists');
+		return res.status(409).json({
+			error: 'name already exists',
+		});
+	}
+
 	const person = {
 		id: getRandomInt(10000),
 		name: body.name,
-		number: body.number,
+		number: body.number || false,
 	};
 	persons = persons.concat(person);
 
