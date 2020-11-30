@@ -1,5 +1,8 @@
 const express = require('express');
 const app = express();
+const bodyParser = require('body-parser');
+
+app.use(bodyParser.json());
 
 let persons = [
 	{
@@ -51,6 +54,24 @@ app.delete('/api/persons/:id', (request, response) => {
 	persons = persons.filter((person) => person.id !== id);
 
 	response.status(204).end();
+});
+
+function getRandomInt(max) {
+	return Math.floor(Math.random() * Math.floor(max));
+}
+
+app.post('/api/persons', (req, res) => {
+	const body = req.body;
+	console.log(body);
+
+	const person = {
+		id: getRandomInt(10000),
+		name: body.name,
+		number: body.number,
+	};
+	persons = persons.concat(person);
+
+	res.json(body);
 });
 
 const PORT = 3001;
