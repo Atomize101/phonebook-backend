@@ -5,6 +5,8 @@ app.use(express.static('build'));
 const morgan = require('morgan');
 const cors = require('cors');
 
+// mongodb+srv://user1:<password>@cluster0.iiypb.mongodb.net/<dbname>?retryWrites=true&w=majority
+
 app.use(cors());
 
 app.use(bodyParser.json());
